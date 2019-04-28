@@ -1,10 +1,15 @@
 package com.example.asynctask_test;
 
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+
+import java.util.HashMap;
+
+import javax.xml.transform.Result;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
 
     class Job1Task extends AsyncTask<Void, Void, Void> {
 
+        HashMap<String, Integer> hashMap = new HashMap<>();
+
         @Override
         protected Void doInBackground(Void... voids) {
             try {
@@ -40,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+            hashMap.put("key", 123);
             return null;
         }
 
@@ -52,8 +61,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    class Job2Task extends AsyncTask<Integer, Integer, Void> {
-
+    class Job2Task extends AsyncTask<Integer, Void, Void> {
+//Background 執行
         @Override
         protected Void doInBackground(Integer... voids) {
             try {
@@ -61,37 +70,52 @@ public class MainActivity extends AppCompatActivity {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
             return null;
         }
-
+//mainthread 上執行
         @Override
         protected void onPreExecute() {
-            TextView textView = findViewById(R.id.info);
-            textView.setText("DONE");
             super.onPreExecute();
+            TextView textView = findViewById(R.id.info);
+            textView.setText("Begin");
+        }
+        //mainthread 上執行
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            TextView textView = findViewById(R.id.info);
+            textView.setText("End");
+            textView.setTextColor(Color.BLUE);
         }
     }
-    class Job3Task extends AsyncTask<Integer, Void, Void> {
+    class Job3Task extends AsyncTask<Integer, Integer, String> {
         TextView textView = findViewById(R.id.info);
 
         @Override
-        protected Void doInBackground(Integer... voids) {
+        protected String doInBackground(Integer... voids) {
             for (int i = 0; i < voids[0]; i++) {
-                publishProgress();
+                publishProgress(i); //call onProgressUpdate 產生倒數的效果
                 try {
                     Thread.sleep(1000);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-            return null;
+            return (voids[0] + " already passed");
         }
 
         @Override
-        protected void onPreExecute() {
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+            textView.setText(String.valueOf(values[0]));
+        }
 
-            textView.setText("DONE");
-            super.onPreExecute();
+        @Override
+        protected void onPostExecute(String aVoid) {
+            super.onPostExecute(aVoid);
+//            textView.setText("DONE");
+            textView.setText(aVoid);
         }
     }
 }
