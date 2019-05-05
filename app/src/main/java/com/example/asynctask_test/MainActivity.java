@@ -4,10 +4,13 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import java.util.HashMap;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import javax.xml.transform.Result;
 
@@ -26,7 +29,15 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case R.id.go2:
-                new Job2Task().execute(3); //將秒數3傳入
+                new Job2Task().executeOnExecutor(Executors.newCachedThreadPool(), 3);
+                new Job2Task().executeOnExecutor(Executors.newCachedThreadPool(), 3);
+
+//                new Job2Task().execute(3);
+//                new Job2Task().execute(3);
+
+                new Job2Task().execute(3);
+                new Job2Task().execute(3);
+                new Job2Task().executeOnExecutor(Executors.newCachedThreadPool(), 3); //將秒數3傳入
                 break;
 
             case R.id.go3:
@@ -84,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+            Log.i("tagggg", "onPostExecute");
             TextView textView = findViewById(R.id.info);
             textView.setText("End");
             textView.setTextColor(Color.BLUE);
