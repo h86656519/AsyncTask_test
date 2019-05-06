@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.HashMap;
@@ -15,11 +17,22 @@ import java.util.concurrent.Executors;
 import javax.xml.transform.Result;
 
 public class MainActivity extends AppCompatActivity {
+    private String TAG = this.getClass().getSimpleName();
+    Button start, stop;
+    ProgressBar pb;
+    MyAsyncTask task1;
+    int pauseTime = 1;
+    int second;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        start = findViewById(R.id.start);
+
+        stop = findViewById(R.id.stop);
+        pb = findViewById(R.id.pb);
+
     }
 
     public void onclick(View view) {
@@ -29,8 +42,8 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case R.id.go2:
-                new Job2Task().executeOnExecutor(Executors.newCachedThreadPool(), 3);
-                new Job2Task().executeOnExecutor(Executors.newCachedThreadPool(), 3);
+//                new Job2Task().executeOnExecutor(Executors.newCachedThreadPool(), 3);
+//                new Job2Task().executeOnExecutor(Executors.newCachedThreadPool(), 3);
 
 //                new Job2Task().execute(3);
 //                new Job2Task().execute(3);
@@ -44,7 +57,28 @@ public class MainActivity extends AppCompatActivity {
                 new Job3Task().execute(6);
                 break;
 
+            case R.id.start:
+                task1 = new MyAsyncTask();
+                task1.execute();
+                break;
+
+            case R.id.stop:
+                task1.cancel(true);
+                break;
+
+            case R.id.pause:
+                task1.cancel(true);
+                pauseTime = second;
+                break;
+
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        task1.cancel(true);
+
     }
 
     class Job1Task extends AsyncTask<Void, Void, Void> {
@@ -72,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     class Job2Task extends AsyncTask<Integer, Void, Void> {
-//Background 執行
+        //Background 執行
         @Override
         protected Void doInBackground(Integer... voids) {
             try {
@@ -80,17 +114,22 @@ public class MainActivity extends AppCompatActivity {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            if (isCancelled()) {
+                return null;
+            }
 
             return null;
         }
-//mainthread 上執行
+
+        //MainThread 上執行
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             TextView textView = findViewById(R.id.info);
             textView.setText("Begin");
         }
-        //mainthread 上執行
+
+        //MainThread 上執行
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
@@ -100,9 +139,17 @@ public class MainActivity extends AppCompatActivity {
             textView.setTextColor(Color.BLUE);
         }
     }
+
     class Job3Task extends AsyncTask<Integer, Integer, String> {
         TextView textView = findViewById(R.id.info);
 
+        //MainThread 上執行
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        //Background 執行
         @Override
         protected String doInBackground(Integer... voids) {
             for (int i = 0; i < voids[0]; i++) {
@@ -113,9 +160,10 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
-            return (voids[0] + " already passed");
+            return (voids[0] + " already passed"); //如果return null 則之後的 onPostExecute 就不會執行
         }
 
+        //用來顯示目前的進度
         @Override
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
@@ -127,6 +175,45 @@ public class MainActivity extends AppCompatActivity {
             super.onPostExecute(aVoid);
 //            textView.setText("DONE");
             textView.setText(aVoid);
+        }
+    }
+
+    class MyAsyncTask extends AsyncTask<String, Integer, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            String result = "完成";
+            for (int i = pauseTime; i <= 10  ; i++) {
+
+                    try {
+                        Log.i(TAG, "doInBackground: " + i);
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    publishProgress(i);
+                }
+
+
+
+            return result;
+        }
+
+        @Override
+        protected void onPreExecute() {
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            start.setText(s);
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+            Log.i(TAG, "onProgressUpdate: " + values[0]);
+            pb.setProgress(values[0]);
+             second = values[0];
         }
     }
 }

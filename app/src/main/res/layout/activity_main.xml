@@ -14,17 +14,19 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/go1"
+            android:text="go1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="onclick" />
 
         <Button
+            android:text="go2"
             android:id="@+id/go2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -33,11 +35,49 @@
 
         <Button
             android:id="@+id/go3"
+            android:text="go3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="onclick" />
     </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/start"
+            android:text="開始"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="onclick"
+         />
+        <Button
+            android:id="@+id/pause"
+            android:text="暫停"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="onclick"
+            />
+        <Button
+            android:id="@+id/stop"
+            android:text="取消"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="onclick"
+           />
+    </LinearLayout>
+    <ProgressBar
+        android:id="@+id/pb"
+        android:progress="10"
+        android:max="10"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 
 </LinearLayout>
