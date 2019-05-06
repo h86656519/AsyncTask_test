@@ -71,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     class Job2Task extends AsyncTask<Integer, Void, Void> {
 //Background 執行
         @Override
