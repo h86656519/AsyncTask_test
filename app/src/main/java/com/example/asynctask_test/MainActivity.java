@@ -18,11 +18,10 @@ import javax.xml.transform.Result;
 
 public class MainActivity extends AppCompatActivity {
     private String TAG = this.getClass().getSimpleName();
-    Button start, stop;
-    ProgressBar pb;
-    MyAsyncTask task1;
-    int pauseTime = 1;
-    int second;
+    private Button start, stop;
+    private ProgressBar pb;
+    private MyAsyncTask task1;
+    private int second;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +57,8 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case R.id.start:
-                task1 = new MyAsyncTask();
+                task1 = new MyAsyncTask(start,stop,pb);
+                task1.setPauseTime(second);
                 task1.execute();
                 break;
 
@@ -68,7 +68,8 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.pause:
                 task1.cancel(true);
-                pauseTime = second;
+                second = task1.getPauseTime();
+
                 break;
 
         }
@@ -178,42 +179,38 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    class MyAsyncTask extends AsyncTask<String, Integer, String> {
-
-        @Override
-        protected String doInBackground(String... params) {
-            String result = "完成";
-            for (int i = pauseTime; i <= 10  ; i++) {
-
-                    try {
-                        Log.i(TAG, "doInBackground: " + i);
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    publishProgress(i);
-                }
-
-
-
-            return result;
-        }
-
-        @Override
-        protected void onPreExecute() {
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            start.setText(s);
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-            Log.i(TAG, "onProgressUpdate: " + values[0]);
-            pb.setProgress(values[0]);
-             second = values[0];
-        }
-    }
+//    class MyAsyncTask extends AsyncTask<String, Integer, String> {
+//
+//        @Override
+//        protected String doInBackground(String... params) {
+//            String result = "完成";
+//            for (int i = pauseTime; i <= 10  ; i++) {
+//                    try {
+//                        Log.i(TAG, "doInBackground: " + i);
+//                        Thread.sleep(1000);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                    publishProgress(i);
+//                }
+//            return result;
+//        }
+//
+//        @Override
+//        protected void onPreExecute() {
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String s) {
+//            start.setText(s);
+//        }
+//
+//        @Override
+//        protected void onProgressUpdate(Integer... values) {
+//            super.onProgressUpdate(values);
+//            Log.i(TAG, "onProgressUpdate: " + values[0]);
+//            pb.setProgress(values[0]);
+//             second = values[0];
+//        }
+//    }
 }
