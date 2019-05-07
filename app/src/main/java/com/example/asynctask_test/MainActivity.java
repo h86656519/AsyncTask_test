@@ -16,21 +16,22 @@ import java.util.concurrent.Executors;
 
 import javax.xml.transform.Result;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements TimeListiner {
     private String TAG = this.getClass().getSimpleName();
     private Button start, stop;
     private ProgressBar pb;
+    private TextView info_tv;
     private MyAsyncTask task1;
-    private int second;
+    private int second = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         start = findViewById(R.id.start);
-
         stop = findViewById(R.id.stop);
         pb = findViewById(R.id.pb);
+        info_tv = findViewById(R.id.info);
 
     }
 
@@ -57,7 +58,8 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case R.id.start:
-                task1 = new MyAsyncTask(start,stop,pb);
+                Log.i(TAG, "second: " + second);
+                task1 = new MyAsyncTask(this);
                 task1.setPauseTime(second);
                 task1.execute();
                 break;
@@ -68,18 +70,41 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.pause:
                 task1.cancel(true);
-                second = task1.getPauseTime();
-
+//                second = task1.getPauseTime();
                 break;
-
         }
     }
+
+//    public static void setPauseTime(int sec) {
+//        second = sec;
+//    }
 
     @Override
     protected void onPause() {
         super.onPause();
+//        second = task1.getPauseTime();
         task1.cancel(true);
 
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putInt("second", second);
+    }
+
+    @Override
+    public void updateSecond(int second) {
+        this.second = second;
+        pb.setProgress(second);
+        if (second == 10){
+            info_tv.setText("完成");
+        }
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
     }
 
     class Job1Task extends AsyncTask<Void, Void, Void> {
