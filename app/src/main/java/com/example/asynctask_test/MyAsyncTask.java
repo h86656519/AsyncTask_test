@@ -25,7 +25,9 @@ public class MyAsyncTask extends AsyncTask<String, Integer, String> {
 //    }
 
     @Override
-    protected String doInBackground(String... params) {
+    protected String doInBackground(String... params) { //也可以用接的參數做事情
+//        String str = params[0]; 例如
+//        String str = params[1]; 也可以接出多個參數
         String result = "完成";
         for (int i = pauseTime; i <= 10; i++) {
             try {

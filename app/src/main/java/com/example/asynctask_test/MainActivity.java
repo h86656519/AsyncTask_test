@@ -60,8 +60,10 @@ public class MainActivity extends AppCompatActivity implements TimeListiner {
             case R.id.start:
                 Log.i(TAG, "second: " + second);
                 task1 = new MyAsyncTask(this);
+//                task1.doInBackground("132","456"); //或是從這邊傳入doInBackground 也可以，但就會在execute()時呼叫第2次doInBackground，一般不會這樣寫
                 task1.setPauseTime(second);
-                task1.execute();
+                task1.execute(); //
+//                task1.execute("132","456"); //正常來說要從這顛做呼叫
                 break;
 
             case R.id.stop:
